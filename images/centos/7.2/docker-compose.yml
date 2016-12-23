@@ -1,0 +1,25 @@
+version: '2.0'
+services:
+    ssh:
+        container_name: ssh
+        image: centos:ssh
+        restart: always
+        networks: 
+            ssh-net:
+                ipv4_address: 172.50.0.101
+        ports:
+            - "60001:22"
+        environment:
+            ZOO_MY_ID: 1
+            ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
+networks:
+    ssh-net:
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "false"
+        ipam:
+            driver: default
+            config: 
+            - subnet: 172.50.0.0/24
+              gateway: 172.50.0.1

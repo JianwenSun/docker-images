@@ -1,0 +1,67 @@
+version: '2'
+services:
+    cassandra1:
+        container_name: cassandra-1.2.4-A
+        image: cassandra:1.2.4
+        volumes:
+            - /data/cassandra:/cassandra
+        networks:
+            cassandra-net:
+                ipv4_address: 172.20.0.101
+        ports:
+            - "49041:9042"
+            - "49161:9160"
+            - "49191:7199"
+            - "50021:22"
+        environment:
+              HOSTNAME: cassandra-A
+              CASSANDRA_NATIVE_TRANSPORT_PORT: 49041
+              CASSANDRA_SEEDS: "172.20.0.101,172.20.0.102,172.20.0.103"
+
+    cassandra2:
+        container_name: cassandra-1.2.4-B
+        image: cassandra:1.2.4
+        volumes:
+            - /data/cassandra:/cassandra
+        networks:
+            cassandra-net:
+                ipv4_address: 172.20.0.102
+        ports:
+            - "49042:9042"
+            - "49162:9160"
+            - "49192:7199"
+            - "50022:22"
+        environment:
+            HOSTNAME: cassandra-B
+            CASSANDRA_SEEDS: "172.20.0.101,172.20.0.102,172.20.0.103"
+            CASSANDRA_NATIVE_TRANSPORT_PORT: 49042
+
+    cassandra3:
+        container_name: cassandra-1.2.4-C
+        image: cassandra:1.2.4
+        volumes:
+            - /data/cassandra:/cassandra
+        networks:
+            cassandra-net:
+                ipv4_address: 172.20.0.103
+        ports:
+            - "49043:9042"
+            - "49163:9160"
+            - "49193:7199"
+            - "50023:22"
+        environment:
+            HOSTNAME: cassandra-C
+            CASSANDRA_SEEDS: "172.20.0.101,172.20.0.102,172.20.0.103"
+            CASSANDRA_NATIVE_TRANSPORT_PORT: 49043
+
+networks:
+    cassandra-net:
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "false"
+        ipam:
+            driver: default
+            config:
+            - subnet: 172.20.0.0/24
+              gateway: 172.20.0.1
+              ip_range: 172.20.0.254/24

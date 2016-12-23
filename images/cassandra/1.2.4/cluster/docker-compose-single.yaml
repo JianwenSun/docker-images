@@ -1,0 +1,32 @@
+version: '2'
+services:
+    cassandra:
+        container_name: ${NODE_NAME}
+        image: cassandra:${NODE_VERSION}
+        restart: always
+        volumes:
+            - /data/cassandra:/cassandra
+        networks:
+            cassandra-net:
+                ipv4_address: ${NODE_IP}
+        ports:
+            - "${NODE_PORT_9042}:9042"
+            - "${NODE_PORT_9160}:9160"
+        environment:
+            HOSTNAME: ${NODE_NAME}
+            CASSANDRA_SEEDS: "${NODE_SEEDS}"
+            CASSANDRA_NATIVE_TRANSPORT_PORT: ${NODE_PORT_9042}
+            CASSANDRA_CONCURRENT_COMPACTORS: 2
+            CASSANDRA_MULTITHREADED_COMPACTION: "true"
+
+networks:
+    cassandra-net:
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "false"
+        ipam:
+            driver: default
+            config:
+            - subnet: 172.20.0.0/24
+              gateway: 172.20.0.1
+              ip_range: 172.20.0.254/24
