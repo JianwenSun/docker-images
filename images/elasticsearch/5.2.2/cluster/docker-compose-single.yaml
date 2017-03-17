@@ -1,0 +1,35 @@
+version: '2'
+services:
+    elasticsearch:
+        container_name: elasticsearch-A
+        image: elasticsearch:5.2.2
+        restart: always
+        volumes:
+            - /data/elasticsearch:/elasticsearch
+        networks:
+            cassandra-net:
+                ipv4_address: 172.20.0.100
+        ports:
+            - "40022:22"
+            - "49200:9200"
+            - "49300:9300"
+        environment:
+            HOSTNAME: elasticsearch-A
+            ELASTICSEARCH_CLUSTER_NAME: TestCluster
+            ELASTICSEARCH_NODE_NAME: elasticsearch-A
+            ELASTICSEARCH_PATH_DATA: /elasticsearch
+            ELASTICSEARCH_PATH_LOGS: /logs
+            ELASTICSEARCH_NETWORK_HOST: 172.20.0.100
+            ELASTICSEARCH_HTTP_PORT: 9200
+
+networks:
+    cassandra-net:
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "false"
+        ipam:
+            driver: default
+            config:
+            - subnet: 172.20.0.0/24
+              gateway: 172.20.0.1
+              ip_range: 172.20.0.254/24
